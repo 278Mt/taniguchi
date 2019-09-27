@@ -66,7 +66,7 @@ class Game(object):
         
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
-        idx_li = random.sample(range(MS_SIZE**2), number_of_mines)
+        idx_li = sorted(random.sample(range(MS_SIZE**2), number_of_mines))
         self.mine_map = list(map(lambda y:
             list(map(lambda x:
                 MINE if y * 8 + x in idx_li else 0,
