@@ -9,6 +9,7 @@ URL: https://github.com/278Mt/taniguchi/blob/master/03_1003_Minesweeper/Mineswee
 本当は np で手抜きしたかったのに
 リスト内包式はノロノロのノロなので、適宜 map からの list に書き換えている
 @author: n_toba
+@id: 4617054
 """
 import random
 
