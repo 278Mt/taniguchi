@@ -4,8 +4,10 @@
 Created on Thu Sep 26 17:12:07 2019
 
 マインスイーパー
+URL: https://github.com/278Mt/taniguchi/blob/master/03_1003_Minesweeper/Minesweeper.py
 たぶんぜんぶのオプションもやってある
 本当は np で手抜きしたかったのに
+リスト内包式はノロノロのノロなので、適宜 map からの list に書き換えている
 @author: n_toba
 """
 import random
@@ -63,7 +65,7 @@ class Game(object):
             number_of_mines = 0
         elif number_of_mines > MS_SIZE ** 2:
             number_of_mines = MS_SIZE ** 2
-        
+
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
         idx_li = sorted(random.sample(range(MS_SIZE**2), number_of_mines))
@@ -74,7 +76,7 @@ class Game(object):
             )),
             range(MS_SIZE)
         ))
-                
+
 
         return
 
@@ -84,14 +86,14 @@ class Game(object):
         地雷数をmine_map[][]に設定する．
         """
         # <-- (STEP 3) ここにコードを追加
-        
+
         for y in range(MS_SIZE):
             li_li = self.mine_map[max(0, y-1):min(MS_SIZE, y+2)]
             tmp = 0
             for x in range(MS_SIZE):
                 li = list(map(lambda li: li[max(0, x-1):min(MS_SIZE, x+2)], li_li))
                 tmp = sum(li, []).count(MINE)
-                
+
                 if self.mine_map[y][x] != MINE:
                     self.mine_map[y][x] = tmp
         return
@@ -116,7 +118,7 @@ class Game(object):
                 # フラグが設置してある場合でも指定されていたら開く
                 if self.game_board[y][x] == FLAG:
                     self.game_board[y][x] = OPEN
-                    
+
                 for _x in range(max(0, x-1), min(MS_SIZE, x+2)):
                     for _y in range(max(0, y-1), min(MS_SIZE, y+2)):
                         # フラグがあったら開かない
