@@ -34,7 +34,7 @@ class Game(object):
         self.init_game_board()
         self.init_mine_map(number_of_mines)
         self.count_mines()
-        
+
 
     def init_game_board(self):
         """ ゲーム盤を初期化 """
@@ -57,7 +57,7 @@ class Game(object):
             number_of_mines = 0
         elif number_of_mines > MS_SIZE ** 2:
             number_of_mines = MS_SIZE ** 2
-        
+
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
         self.mine_map = np.zeros([MS_SIZE] * 2, dtype=np.int8)
@@ -78,7 +78,7 @@ class Game(object):
         mask[1, 1] = 0
         tmp = signal.correlate2d(self.mine_map, mask, mode="same", boundary="fill")
         self.mine_map[self.mine_map != MINE] = tmp[self.mine_map != MINE]
-        
+
         return
 
 
@@ -101,7 +101,7 @@ class Game(object):
                 # フラグが設置してある場合でも指定されていたら開く
                 if self.game_board[y, x] == FLAG:
                     self.game_board[y, x] = OPEN
-                    
+
                 for _x in range(max(0, x-1), min(MS_SIZE, x+2)):
                     for _y in range(max(0, y-1), min(MS_SIZE, y+2)):
                         # フラグがあったら開かない
