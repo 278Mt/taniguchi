@@ -78,7 +78,6 @@ class Game(object):
             range(MS_SIZE)
         ))
 
-
         return
 
 
@@ -97,6 +96,7 @@ class Game(object):
 
                 if self.mine_map[y][x] != MINE:
                     self.mine_map[y][x] = tmp
+
         return
 
 
@@ -152,17 +152,19 @@ class Game(object):
     def is_finished(self) -> bool:
         """ 地雷セル以外のすべてのセルが開かれたかチェック """
         # <-- (STEP 6) ここにコードを追加
-        # この10がキモい
+        # この足し算がキモい。そもそも、地雷の数はパブリック変数に入れておいてほしい。
         return sum(self.game_board, []).count(OPEN) + sum(self.mine_map, []).count(MINE) == MS_SIZE**2
 
 
     def print_header(self):
+
         print("=====================================")
         print("===  Mine Sweeper Python Ver. 1  ====")
         print("=====================================")
 
 
     def print_footer(self):
+
         print("   ", end="")
         for x in range(MS_SIZE):
             print("---", end="")
@@ -173,6 +175,7 @@ class Game(object):
 
 
     def print_mine_map(self):
+
         print(" [y]")
         for y in range(MS_SIZE):
             print("%2d|"%y, end="")
