@@ -39,7 +39,7 @@ class Game(object):
         self.count_mines()
 
 
-    def arround_iter(self, x, y):
+    def arround_iter(self, x, y) -> list:
 
         res = iter(sum(
             list(map(lambda x_:
@@ -133,7 +133,6 @@ class Game(object):
                 # フラグが設置してある場合でも指定されていたら開く
                 if self.game_board[y][x] == FLAG:
                     self.game_board[y][x] = OPEN
-
 
                 for x_, y_ in self.arround_iter(x, y):
 
