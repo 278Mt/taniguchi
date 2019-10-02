@@ -39,7 +39,7 @@ class Game(object):
         self.count_mines()
 
 
-    def arround_iter(self, x, y) -> list:
+    def arround_iter(self, x, y) -> iter:
 
         res = iter(sum(
             list(map(lambda x_:
