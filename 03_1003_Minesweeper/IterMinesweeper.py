@@ -172,44 +172,41 @@ class Game(object):
 
     def print_header(self):
 
-        print("=====================================")
-        print("===  Mine Sweeper Python Ver. 1  ====")
-        print("=====================================")
+        print('=====================================')
+        print('===  Mine Sweeper Python Ver. 1  ====')
+        print('=====================================')
+        
+        return
 
 
     def print_footer(self):
 
-        print("   ", end="")
-        for x in range(MS_SIZE):
-            print("---", end="")
-        print("[x]\n   ", end="")
-        for x in range(MS_SIZE):
-            print("%3d"%x, end="")
-        print("")
+        print('   {}[x]'.format('---'*MS_SIZE))
+        print('   ' + ''.join(map(lambda x: '{:>3}'.format(x), range(MS_SIZE))))
+        
+        return
 
 
     def print_mine_map(self):
 
-        print(" [y]")
+        print(' [y]')
         for y in range(MS_SIZE):
-            print("%2d|"%y, end="")
-            for x in range(MS_SIZE):
-                print("%2d"%self.mine_map[y][x], end="")
-            print("")
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>2}'.format(self.mine_map[y][x]), range(MS_SIZE))))
+
+        return
 
 
     def print_game_board(self):
 
-        marks = {CLOSE: 'x'*9, OPEN: [' ', *range(1, 9)], FLAG: 'P'*9}
+        marks = {CLOSE: 'x'*9, OPEN: ''.join(map(str, [' ', *range(1, 1+8)])), FLAG: 'P'*9}
         self.print_header()
-        print("[y]")
+        print('[y]')
         for y in range(MS_SIZE):
-            print("%2d|"%y, end="")
-            for x in range(MS_SIZE):
-                # オプション3もやった
-                print('{:>3}'.format(marks[self.game_board[y][x]][self.mine_map[y][x]]), end='')
-            print("")
+            # オプション3もやった
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(marks[self.game_board[y][x]][self.mine_map[y][x]]), range(MS_SIZE))))
         self.print_footer()
+        
+        return
 
 
 
@@ -220,29 +217,29 @@ if __name__ == '__main__':
     while not quitGame:
 
         b.print_game_board()
-        print("o x y: セルを開く，f x y: フラグ設定/解除, q: 終了 -->", end="")
+        print('o x y: セルを開く，f x y: フラグ設定/解除, q: 終了 -->', end='')
         command_str = input()
 
         try:
-            cmd = command_str.split(" ")
+            cmd = command_str.split(' ')
             if cmd[0] == 'o':
                 x, y = list(map(int, cmd[1:]))
                 if b.open_cell(x, y) == False:
-                    print("ゲームオーバー!")
+                    print('ゲームオーバー!')
                     quitGame = True
             elif cmd[0] == 'f':
                 x, y = list(map(int, cmd[1:]))
                 b.flag_cell(x, y)
             elif cmd[0] == 'q':
-                print("ゲームを終了します．")
+                print('ゲームを終了します．')
                 quitGame = True
                 break
             else:
-                print("コマンドはo, f, qのいずれかを指定してください．")
+                print('コマンドはo, f, qのいずれかを指定してください．')
         except:
-            print("もう一度，コマンドを入力してください．")
+            print('もう一度，コマンドを入力してください．')
 
         if b.is_finished():
             b.print_game_board()
-            print("ゲームクリア!")
+            print('ゲームクリア!')
             quitGame = True
