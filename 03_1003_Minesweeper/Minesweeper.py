@@ -7,17 +7,16 @@ Created on Thu Sep 26 17:12:07 2019
 URL: https://github.com/278Mt/taniguchi/blob/master/03_1003_Minesweeper/Minesweeper.py
 たぶんぜんぶのオプションもやってある
 本当は np で手抜きしたかったのに
-リスト内包式はノロノロのノロなので、適宜 map からの list に書き換えている
+リスト内包式はノロノロのノロなので、適宜 map からの list に書き換えている→Python3.6からはリスト内包表記の方が速い
 @author: n_toba
 @id: 4617054
 """
-import random
+from random import randrange
 
 
 MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
 MINE = -1
-
 
 
 class Game(object):
@@ -43,13 +42,12 @@ class Game(object):
         """ ゲーム盤を初期化 """
         # <-- (STEP 1) ここにコードを追加
         # オプション1はやった
-        self.game_board = list(map(lambda y:
-            list(map(lambda x:
-                CLOSE,
-                range(MS_SIZE)
-            )),
-            range(MS_SIZE)
-        ))
+        self.game_board = [
+            [
+                CLOSE for x in range(MS_SIZE)
+            ]
+            for y in range(MS_SIZE)
+        ]
 
         return
 
@@ -69,18 +67,37 @@ class Game(object):
 
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
-        idx_li = sorted(random.sample(range(MS_SIZE**2), number_of_mines))
-        self.mine_map = list(map(lambda y:
-            list(map(lambda x:
-                MINE if y * 8 + x in idx_li else 0,
-                range(MS_SIZE)
-            )),
-            range(MS_SIZE)
-        ))
+        idx_li = self.fisher_yates(number_of_mines)
+        self.mine_map = [
+            [
+                MINE if  (y, x) in idx_li else 0
+                for x in range(MS_SIZE)
+            ]
+            for y in range(MS_SIZE)
+        ]
 
         return
 
 
+    # random.sample が「期待した答え」ではなかったらしいので、変更
+    def fisher_yates(self, number_of_mines) -> list:
+        
+        tmp_li = [i for i in range(MS_SIZE**2)]
+        res = []
+        for i in range(number_of_mines):
+            idx = randrange(0, MS_SIZE**2 - i)
+            res.append(divmod(tmp_li[idx], MS_SIZE))
+            tmp_li.pop(idx)
+            
+        return sorted(res)
+    
+    
+    # 一次元化してから目的変数を数え上げる
+    def flatten_count(self, li, x) -> int:
+        
+        return sum(li, []).count(x)
+    
+    
     def count_mines(self):
         """ 8近傍の地雷数をカウントしmine_mapに格納
         地雷数をmine_map[][]に設定する．
@@ -91,8 +108,8 @@ class Game(object):
             li_li = self.mine_map[max(0, y-1):min(MS_SIZE, y+2)]
             tmp = 0
             for x in range(MS_SIZE):
-                li = list(map(lambda li: li[max(0, x-1):min(MS_SIZE, x+2)], li_li))
-                tmp = sum(li, []).count(MINE)
+                li = [li[max(0, x-1):min(MS_SIZE, x+2)] for li in li_li]
+                tmp = self.flatten_count(li, MINE)
 
                 if self.mine_map[y][x] != MINE:
                     self.mine_map[y][x] = tmp
@@ -153,7 +170,7 @@ class Game(object):
         """ 地雷セル以外のすべてのセルが開かれたかチェック """
         # <-- (STEP 6) ここにコードを追加
         # この足し算がキモい。そもそも、地雷の数はパブリック変数に入れておいてほしい。
-        return sum(self.game_board, []).count(OPEN) + sum(self.mine_map, []).count(MINE) == MS_SIZE**2
+        return self.flatten_count(self.game_board, OPEN) + self.flatten_count(self.mine_map, MINE) == MS_SIZE**2
 
 
     def print_header(self):
