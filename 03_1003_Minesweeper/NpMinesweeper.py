@@ -4,8 +4,7 @@
 Created on Thu Sep 26 17:12:07 2019
 
 マインスイーパー
-たぶんぜんぶのオプションもやってある
-本当は np で手抜きしたかったのに
+numpyを使った
 @author: n_toba
 """
 import numpy as np
@@ -40,6 +39,8 @@ class Game(object):
         """ ゲーム盤を初期化 """
         # <-- (STEP 1) ここにコードを追加
         # オプション1はやった
+        # 追加課題
+        # init_game_board(): 配列の初期化関数を使って 1 行で表現
         self.game_board = np.zeros([MS_SIZE] * 2, dtype=np.int8)
 
         return
@@ -62,9 +63,7 @@ class Game(object):
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
         self.mine_map = np.zeros([MS_SIZE] * 2, dtype=np.int8)
         for idx in np.random.choice(np.arange(MS_SIZE**2), number_of_mines, replace=False):
-            x = idx % MS_SIZE
-            y = idx // MS_SIZE
-            self.mine_map[y, x] = MINE
+            self.mine_map[divmod(idx, MS_SIZE)] = MINE
 
         return
 
@@ -74,6 +73,10 @@ class Game(object):
         地雷数をmine_map[][]に設定する．
         """
         # <-- (STEP 3) ここにコードを追加
+        # 追加課題
+        # count_mines(): 4 重ループを 2 重ループに減らす
+        # signal で畳み込みをすればもっと短く書ける
+
         mask = -np.ones([3] * 2)
         mask[1, 1] = 0
         tmp = signal.correlate2d(self.mine_map, mask, mode="same", boundary="fill")
@@ -134,46 +137,39 @@ class Game(object):
     def is_finished(self) -> bool:
         """ 地雷セル以外のすべてのセルが開かれたかチェック """
         # <-- (STEP 6) ここにコードを追加
-        # この10がキモい
+        # is_finished() : 1 行で表現
+        # 追加課題
         return np.all(self.mine_map[self.game_board != OPEN] == MINE)
 
 
     def print_header(self):
-        print("=====================================")
-        print("===  Mine Sweeper Python Ver. 1  ====")
-        print("=====================================")
+
+        print('=====================================')
+        print('===  Mine Sweeper Python Ver. 1  ====')
+        print('=====================================')
 
 
     def print_footer(self):
-        print("   ", end="")
-        for x in range(MS_SIZE):
-            print("---", end="")
-        print("[x]\n   ", end="")
-        for x in range(MS_SIZE):
-            print("%3d"%x, end="")
-        print("")
+
+        print('   {}[x]'.format('---'*MS_SIZE))
+        print('   ' + ''.join(map(lambda x: '{:>3}'.format(x), range(MS_SIZE))))
 
 
     def print_mine_map(self):
-        print(" [y]")
+
+        print(' [y]')
         for y in range(MS_SIZE):
-            print("%2d|"%y, end="")
-            for x in range(MS_SIZE):
-                print("%2d"%self.mine_map[y, x], end="")
-            print("")
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(self.mine_map[y][x]), range(MS_SIZE))))
 
 
     def print_game_board(self):
 
-        marks = {CLOSE: 'x'*9, OPEN: [' ', *range(1, 9)], FLAG: 'P'*9}
+        marks = {CLOSE: 'x'*9, OPEN: ''.join(map(str, [' ', *range(1, 1+8)])), FLAG: 'P'*9}
         self.print_header()
-        print("[y]")
+        print('[y]')
         for y in range(MS_SIZE):
-            print("%2d|"%y, end="")
-            for x in range(MS_SIZE):
-                # オプション3もやった
-                print('{:>3}'.format(marks[self.game_board[y, x]][self.mine_map[y, x]]), end='')
-            print("")
+            # オプション3もやった
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(marks[self.game_board[y, x]][self.mine_map[y, x]]), range(MS_SIZE))))
         self.print_footer()
 
 

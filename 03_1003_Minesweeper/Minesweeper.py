@@ -199,9 +199,8 @@ class Game(object):
 
 if __name__ == '__main__':
     b = Game()
-    quitGame = False
 
-    while not quitGame:
+    while True:
 
         b.print_game_board()
         print("o x y: セルを開く，f x y: フラグ設定/解除, q: 終了 -->", end="")
@@ -213,13 +212,12 @@ if __name__ == '__main__':
                 x, y = list(map(int, cmd[1:]))
                 if b.open_cell(x, y) == False:
                     print("ゲームオーバー!")
-                    quitGame = True
+                    break
             elif cmd[0] == 'f':
                 x, y = list(map(int, cmd[1:]))
                 b.flag_cell(x, y)
             elif cmd[0] == 'q':
                 print("ゲームを終了します．")
-                quitGame = True
                 break
             else:
                 print("コマンドはo, f, qのいずれかを指定してください．")
@@ -229,4 +227,4 @@ if __name__ == '__main__':
         if b.is_finished():
             b.print_game_board()
             print("ゲームクリア!")
-            quitGame = True
+            break
