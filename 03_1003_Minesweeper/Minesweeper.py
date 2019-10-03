@@ -67,14 +67,14 @@ class Game(object):
 
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
-        idx_li = self.fisher_yates(number_of_mines)
         self.mine_map = [
             [
-                MINE if  (y, x) in idx_li else 0
-                for x in range(MS_SIZE)
+                0 for x in range(MS_SIZE)
             ]
             for y in range(MS_SIZE)
         ]
+        for y, x in self.fisher_yates(number_of_mines):
+            self.mine_map[y][x] = MINE
 
         return
 
