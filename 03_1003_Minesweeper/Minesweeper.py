@@ -44,12 +44,10 @@ class Game(object):
         # オプション1はやった
         self.game_board = [
             [
-                CLOSE for x in range(MS_SIZE)
+                CLOSE for _ in range(MS_SIZE)
             ]
-            for y in range(MS_SIZE)
+            for _ in range(MS_SIZE)
         ]
-
-        return
 
 
     def init_mine_map(self, number_of_mines: int):
@@ -69,35 +67,33 @@ class Game(object):
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
         self.mine_map = [
             [
-                0 for x in range(MS_SIZE)
+                0 for _ in range(MS_SIZE)
             ]
-            for y in range(MS_SIZE)
+            for _ in range(MS_SIZE)
         ]
         for y, x in self.fisher_yates(number_of_mines):
             self.mine_map[y][x] = MINE
 
-        return
-
 
     # random.sample が「期待した答え」ではなかったらしいので、変更
     def fisher_yates(self, number_of_mines) -> list:
-        
+
         tmp_li = [i for i in range(MS_SIZE**2)]
         res = []
         for i in range(number_of_mines):
             idx = randrange(0, MS_SIZE**2 - i)
             res.append(divmod(tmp_li[idx], MS_SIZE))
             tmp_li.pop(idx)
-            
+
         return sorted(res)
-    
-    
+
+
     # 一次元化してから目的変数を数え上げる
-    def flatten_count(self, li, x) -> int:
-        
+    def flatten_count(self, li: list, x: int) -> int:
+
         return sum(li, []).count(x)
-    
-    
+
+
     def count_mines(self):
         """ 8近傍の地雷数をカウントしmine_mapに格納
         地雷数をmine_map[][]に設定する．
@@ -113,8 +109,6 @@ class Game(object):
 
                 if self.mine_map[y][x] != MINE:
                     self.mine_map[y][x] = tmp
-
-        return
 
 
     def open_cell(self, x: int, y: int) -> bool:
@@ -163,8 +157,6 @@ class Game(object):
         elif tmp == FLAG:
             self.game_board[y][x] = CLOSE
 
-        return
-
 
     def is_finished(self) -> bool:
         """ 地雷セル以外のすべてのセルが開かれたかチェック """
@@ -175,43 +167,32 @@ class Game(object):
 
     def print_header(self):
 
-        print("=====================================")
-        print("===  Mine Sweeper Python Ver. 1  ====")
-        print("=====================================")
+        print('=====================================')
+        print('===  Mine Sweeper Python Ver. 1  ====')
+        print('=====================================')
 
 
     def print_footer(self):
 
-        print("   ", end="")
-        for x in range(MS_SIZE):
-            print("---", end="")
-        print("[x]\n   ", end="")
-        for x in range(MS_SIZE):
-            print("%3d"%x, end="")
-        print("")
+        print('   {}[x]'.format('---'*MS_SIZE))
+        print('   ' + ''.join(map(lambda x: '{:>3}'.format(x), range(MS_SIZE))))
 
 
     def print_mine_map(self):
 
-        print(" [y]")
+        print(' [y]')
         for y in range(MS_SIZE):
-            print("%2d|"%y, end="")
-            for x in range(MS_SIZE):
-                print("%2d"%self.mine_map[y][x], end="")
-            print("")
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(self.mine_map[y][x]), range(MS_SIZE))))
 
 
     def print_game_board(self):
 
-        marks = {CLOSE: 'x'*9, OPEN: [' ', *range(1, 9)], FLAG: 'P'*9}
+        marks = {CLOSE: 'x'*9, OPEN: ''.join(map(str, [' ', *range(1, 1+8)])), FLAG: 'P'*9}
         self.print_header()
-        print("[y]")
+        print('[y]')
         for y in range(MS_SIZE):
-            print("%2d|"%y, end="")
-            for x in range(MS_SIZE):
-                # オプション3もやった
-                print('{:>3}'.format(marks[self.game_board[y][x]][self.mine_map[y][x]]), end='')
-            print("")
+            # オプション3もやった
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(marks[self.game_board[y][x]][self.mine_map[y][x]]), range(MS_SIZE))))
         self.print_footer()
 
 

@@ -175,7 +175,7 @@ class Game(object):
         print('=====================================')
         print('===  Mine Sweeper Python Ver. 1  ====')
         print('=====================================')
-        
+
         return
 
 
@@ -183,7 +183,7 @@ class Game(object):
 
         print('   {}[x]'.format('---'*MS_SIZE))
         print('   ' + ''.join(map(lambda x: '{:>3}'.format(x), range(MS_SIZE))))
-        
+
         return
 
 
@@ -205,7 +205,7 @@ class Game(object):
             # オプション3もやった
             print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(marks[self.game_board[y][x]][self.mine_map[y][x]]), range(MS_SIZE))))
         self.print_footer()
-        
+
         return
 
 
