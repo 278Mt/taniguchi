@@ -45,8 +45,6 @@ class Game(object):
         # init_game_board(): 配列の初期化関数を使って 1 行で表現
         self.game_board = np.zeros([MS_SIZE] * 2, dtype=np.int8)
 
-        return
-
 
     def init_mine_map(self, number_of_mines: int):
         """ 地雷マップ(self->mine_map)の初期化
@@ -67,8 +65,6 @@ class Game(object):
         for idx in np.random.choice(np.arange(MS_SIZE**2), number_of_mines, replace=False):
             self.mine_map[divmod(idx, MS_SIZE)] = MINE
 
-        return
-
 
     def count_mines(self):
         """ 8近傍の地雷数をカウントしmine_mapに格納
@@ -83,8 +79,6 @@ class Game(object):
         mask[1, 1] = 0
         tmp = signal.correlate2d(self.mine_map, mask, mode="same", boundary="fill")
         self.mine_map[self.mine_map != MINE] = tmp[self.mine_map != MINE]
-
-        return
 
 
     def open_cell(self, x: int, y: int) -> bool:
@@ -132,8 +126,6 @@ class Game(object):
             self.game_board[y, x] = FLAG
         elif tmp == FLAG:
             self.game_board[y, x] = CLOSE
-
-        return
 
 
     def is_finished(self) -> bool:
