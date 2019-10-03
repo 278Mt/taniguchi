@@ -5,6 +5,8 @@ Created on Thu Sep 26 17:12:07 2019
 
 マインスイーパー
 numpyを使った
+ただし、ベンチマークでは二次元リスト型によるものなので、TestMinesweeperではこれを実行できない。
+URL: https://github.com/278Mt/taniguchi/blob/master/03_1003_Minesweeper/NpMinesweeper.py
 @author: n_toba
 """
 import numpy as np
