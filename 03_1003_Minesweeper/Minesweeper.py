@@ -58,10 +58,7 @@ class Game(object):
         地雷セルに-1を設定する．
         """
         # number_of_minesが規定数よりも多かったり少なかったりする場合を想定する
-        if number_of_mines < 0:
-            number_of_mines = 0
-        elif number_of_mines > MS_SIZE ** 2:
-            number_of_mines = MS_SIZE ** 2
+        number_of_mines = min(max(number_of_mines, 0), MS_SIZE ** 2)
 
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる

@@ -11,6 +11,7 @@ URL: https://github.com/278Mt/taniguchi/blob/master/03_1003_Minesweeper/NpMinesw
 """
 import numpy as np
 import scipy.signal as signal
+from random import randrange
 
 MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
@@ -54,16 +55,26 @@ class Game(object):
         地雷セルに-1を設定する．
         """
         # number_of_minesが規定数よりも多かったり少なかったりする場合を想定する
-        if number_of_mines < 0:
-            number_of_mines = 0
-        elif number_of_mines > MS_SIZE ** 2:
-            number_of_mines = MS_SIZE ** 2
+        number_of_mines = min(max(number_of_mines, 0), MS_SIZE ** 2)
 
         # <-- (STEP 2) ここにコードを追加
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
         self.mine_map = np.zeros([MS_SIZE] * 2, dtype=np.int8)
-        for idx in np.random.choice(np.arange(MS_SIZE**2), number_of_mines, replace=False):
-            self.mine_map[divmod(idx, MS_SIZE)] = MINE
+        for y, x in self.fisher_yates(number_of_mines):
+            self.mine_map[y][x] = MINE
+
+
+    # random.sample が「期待した答え」ではなかったらしいので、変更
+    def fisher_yates(self, number_of_mines) -> list:
+
+        tmp_li = [i for i in range(MS_SIZE**2)]
+        res = []
+        for i in range(number_of_mines):
+            idx = randrange(0, MS_SIZE**2 - i)
+            res.append(divmod(tmp_li[idx], MS_SIZE))
+            tmp_li.pop(idx)
+
+        return sorted(res)
 
 
     def count_mines(self):
@@ -75,7 +86,7 @@ class Game(object):
         # count_mines(): 4 重ループを 2 重ループに減らす
         # signal で畳み込みをすればもっと短く書ける
 
-        mask = -np.ones([3] * 2)
+        mask = np.full([3] * 2, MINE)
         mask[1, 1] = 0
         tmp = signal.correlate2d(self.mine_map, mask, mode="same", boundary="fill")
         self.mine_map[self.mine_map != MINE] = tmp[self.mine_map != MINE]
