@@ -10,13 +10,24 @@ URL: https://github.com/278Mt/taniguchi/blob/master/03_1003_Minesweeper/NpMinesw
 @author: n_toba
 """
 import numpy as np
-import scipy.signal as signal
+from scipy.signal import correlate2d
 from random import randrange
 
 MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
 MINE = -1
 
+
+def timer(fn):
+    from time import time
+    def inr_fn(*arg, **kwarg):
+        com = time()
+        res = fn(*arg, **kwarg)
+        print(time() - com)
+
+        return res
+
+    return inr_fn
 
 
 class Game(object):
@@ -88,7 +99,7 @@ class Game(object):
 
         mask = np.full([3] * 2, MINE)
         mask[1, 1] = 0
-        tmp = signal.correlate2d(self.mine_map, mask, mode="same", boundary="fill")
+        tmp = correlate2d(self.mine_map, mask, mode="same", boundary="fill")
         self.mine_map[self.mine_map != MINE] = tmp[self.mine_map != MINE]
 
 
@@ -164,7 +175,7 @@ class Game(object):
 
         print(' [y]')
         for y in range(MS_SIZE):
-            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(self.mine_map[y][x]), range(MS_SIZE))))
+            print('{:>2}|'.format(y) + ''.join(map(lambda x: '{:>3}'.format(self.mine_map[y, x]), range(MS_SIZE))))
 
 
     def print_game_board(self):
