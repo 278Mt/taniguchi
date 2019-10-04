@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python3
 """
-Created on Thu Sep 26 17:12:07 2019
+Created on Thu Oct  3 16:13:20 2019
 
 マインスイーパー
 numpyを使った
