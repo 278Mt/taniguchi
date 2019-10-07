@@ -20,9 +20,9 @@ MINE = -1
 
 def timer(fn):
     from time import time
-    def inr_fn(*arg, **kwarg):
+    def inr_fn(*args, **kwargs):
         com = time()
-        res = fn(*arg, **kwarg)
+        res = fn(*args, **kwargs)
         print(time() - com)
 
         return res
@@ -72,7 +72,7 @@ class Game(object):
         # オプション2もやった。0 から 64 までの重複しないリストを生成してから、それを用いる
         self.mine_map = np.zeros([MS_SIZE] * 2, dtype=np.int8)
         for y, x in self.fisher_yates(number_of_mines):
-            self.mine_map[y][x] = MINE
+            self.mine_map[y, x] = MINE
 
 
     # random.sample が「期待した答え」ではなかったらしいので、変更
@@ -99,7 +99,7 @@ class Game(object):
 
         mask = np.full([3] * 2, MINE)
         mask[1, 1] = 0
-        tmp = correlate2d(self.mine_map, mask, mode="same", boundary="fill")
+        tmp = correlate2d(self.mine_map, mask, mode='same', boundary='fill')
         self.mine_map[self.mine_map != MINE] = tmp[self.mine_map != MINE]
 
 
@@ -123,6 +123,8 @@ class Game(object):
                 if self.game_board[y, x] == FLAG:
                     self.game_board[y, x] = OPEN
 
+                x_slice = slice(max(0, x-1), min(MS_SIZE, x+2))
+                y_slice = slice(max(0, y-1), min(MS_SIZE, y+2))
                 for _x in range(max(0, x-1), min(MS_SIZE, x+2)):
                     for _y in range(max(0, y-1), min(MS_SIZE, y+2)):
                         # フラグがあったら開かない
@@ -192,7 +194,6 @@ class Game(object):
 
 if __name__ == '__main__':
     b = Game()
-    quitGame = False
 
     if False:
         for y in range(MS_SIZE):
@@ -200,32 +201,31 @@ if __name__ == '__main__':
                 if b.mine_map[y, x] != -1:
                     b.game_board[y, x] = OPEN
 
-    while not quitGame:
+    while True:
 
         b.print_game_board()
-        print("o x y: セルを開く，f x y: フラグ設定/解除, q: 終了 -->", end="")
+        print('o x y: セルを開く，f x y: フラグ設定/解除, q: 終了 -->', end='')
         command_str = input()
 
         try:
-            cmd = command_str.split(" ")
+            cmd = command_str.split(' ')
             if cmd[0] == 'o':
                 x, y = list(map(int, cmd[1:]))
                 if b.open_cell(x, y) == False:
-                    print("ゲームオーバー!")
-                    quitGame = True
+                    print('ゲームオーバー!')
+                    break
             elif cmd[0] == 'f':
                 x, y = list(map(int, cmd[1:]))
                 b.flag_cell(x, y)
             elif cmd[0] == 'q':
-                print("ゲームを終了します．")
-                quitGame = True
+                print('ゲームを終了します．')
                 break
             else:
-                print("コマンドはo, f, qのいずれかを指定してください．")
+                print('コマンドはo, f, qのいずれかを指定してください．')
         except:
-            print("もう一度，コマンドを入力してください．")
+            print('もう一度，コマンドを入力してください．')
 
         if b.is_finished():
             b.print_game_board()
-            print("ゲームクリア!")
-            quitGame = True
+            print('ゲームクリア!')
+            break
