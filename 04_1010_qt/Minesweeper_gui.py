@@ -29,7 +29,7 @@ CLOSE, OPEN, FLAG = 0, 1, 2
 
 class MyPushButton(QPushButton):
     
-    def __init__(self, text: str, x: int, y: int, parent):
+    def __init__(self, text, x: int, y: int, parent=None):
         """ セルに対応するボタンを生成 """
         super(MyPushButton, self).__init__(text, parent)
         self.parent = parent
@@ -37,9 +37,9 @@ class MyPushButton(QPushButton):
         self.y = y
         self.setMinimumSize(20, 20)
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+
         
-        
-    def set_bg_color(self, colorname: str='white'):
+    def set_bg_color(self, colorname: str='gray'):
         """ セルの色を指定する
         Arguments:
             self
@@ -48,11 +48,21 @@ class MyPushButton(QPushButton):
         self.setStyleSheet("MyPushButton{{background-color: {}}}".format(colorname))
         
         
-    def on_click(self):
+    def on_click(self, game: Game):
         """ セルをクリックしたときの動作 """
         # ★以下，コードを追加★
-        self.clicked.connect(lambda: print(self.text))
-    
+        QApplication.keyboardModifiers()
+        self.game = game
+        self.clicked.connect(self.__fn)
+        
+        
+    def __fn(self):
+        
+        x, y, text_str = self.x, self.y, self.text()
+        print('condition: {}, x: {}, y: {}'.format(text_str, x, y))
+        self.game.open_cell(x, y)
+
+
     
 class MinesweeperWindow(QMainWindow):
     
@@ -71,15 +81,21 @@ class MinesweeperWindow(QMainWindow):
         
         # ★以下，コードを追加★
         self.statusBar().showMessage('Shift+クリックでフラグをセット')  # ステータスバーに文言と表示
-        
+        self.__call_game_board()
+
+
+    def __call_game_board(self):
+        # ゲームボードを構築する.
 
         vbox = QVBoxLayout(spacing=0)
-        for x in range(MS_SIZE):
+        for y in range(MS_SIZE-1, -1, -1):
             hbox = QHBoxLayout()
-            for y in range(MS_SIZE):
-                b = QPushButton('x{}{}'.format(y, x))
-                #b.clicked.connect(lambda: print(b.text()))
-                hbox.addWidget(b)        
+            for x in range(MS_SIZE):
+                text = self.game.mine_map[y][x] if self.game.game_board[y][x]==OPEN else 'P' if self.game.game_board[y][x]==FLAG else 'x'
+                b = MyPushButton(text, x, y)
+                b.set_bg_color()
+                b.on_click(self.game)
+                hbox.addWidget(b)
             vbox.addLayout(hbox)
 
         container = QWidget()
