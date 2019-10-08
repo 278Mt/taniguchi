@@ -12,11 +12,10 @@ dirname = abspath('../03_1003_Minesweeper')
 del abspath
 sys.path.append(dirname)
 from Minesweeper import Game
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton
 import datetime
-
-
-
+        
+        
 class MyWindow(QMainWindow):
     
     def __init__(self):
@@ -44,7 +43,6 @@ class MyWindow(QMainWindow):
 
 # この def main をサボると、カーネルがぶっ飛ぶらしい。Flaskと似てる。
 def main():
-    
     app = QApplication(sys.argv)
     w = MyWindow()
     app.exec_()
