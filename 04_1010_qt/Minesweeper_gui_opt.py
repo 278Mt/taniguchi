@@ -27,12 +27,16 @@ color_dic = {CLOSE: 'gray', OPEN: 'blue', FLAG: 'yellow'}
 flag_str = 'P'
 close_str = 'x'
 iconsize = (50, 50)
+nonzero_png = '{}.png'.format
+zero_png = 'zero.png'
+flag_png = 'flag.png'
+close_png = 'close.png'
 
 # ★今までに作成したコードからGameクラスをコピー★
 # コピーせずに上位ディレクトリからimportする方が保守的に良いため、その方法をとった。
 
 class MyPushButton(QPushButton):
-    
+
     def __init__(self, text, x: int, y: int, parent):
         """ セルに対応するボタンを生成 """
         super(MyPushButton, self).__init__(text, parent)
@@ -42,7 +46,7 @@ class MyPushButton(QPushButton):
         self.setMinimumSize(20, 20)
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
 
-        
+
     def set_bg_color(self, colorname: str='gray'):
         """ セルの色を指定する
         Arguments:
@@ -50,8 +54,8 @@ class MyPushButton(QPushButton):
             colorname: 文字列 -- 色名 (例, "white")
         """
         self.setStyleSheet("MyPushButton{{background-color: {}}}".format(colorname))
-        
-        
+
+
     def on_click(self):
         """ セルをクリックしたときの動作 """
         # ★以下，コードを追加★
@@ -65,41 +69,41 @@ class MyPushButton(QPushButton):
         else:
             if game.open_cell(x, y) == False:
                 self.__game_over()
-                
+
         if game.is_finished():
             self.__game_clear()
-            
+
         self.parent.show_cell_status()
 
-                
+
     def __game_over(self):
         print("ゲームオーバー!")
         QMessageBox.information(self, "Game Over", "ゲームオーバー！")
         self.parent.close()
 
-    
+
     def __game_clear(self):
         print("ゲームクリア!")
         QMessageBox.information(self, "Game Clear", "ゲームクリア！")
         self.parent.close()
 
 
-    
+
 class MinesweeperWindow(QMainWindow):
-    
+
     def __init__(self):
         """ インスタンスが生成されたときに呼び出されるメソッド """
         print('RUNNING PROGRAMME')
         super(MinesweeperWindow, self).__init__()
         self.game = Game()
         self.initUI()
-    
-    
+
+
     def initUI(self):
-        """ UIの初期化 """        
+        """ UIの初期化 """
         self.resize(500, 500)
         self.setWindowTitle('Minesweeper')
-        
+
         # ★以下，コードを追加★
         self.statusBar().showMessage('Shift+クリックでフラグをセット')  # ステータスバーに文言と表示
         self.__call_game_board()
@@ -117,9 +121,9 @@ class MinesweeperWindow(QMainWindow):
                 button = MyPushButton(None, x, y, self)
                 button.set_bg_color()
                 button.clicked.connect(button.on_click)
-                close_im = QPixmap('ss.png')
+                close_im = QPixmap(close_png)
                 button.setIcon(QIcon(close_im))
-                button.setIconSize(QSize(*iconsize))     
+                button.setIconSize(QSize(*iconsize))
                 hbox.addWidget(button)
                 self.button_dic[(x, y)] = button
 
@@ -142,29 +146,29 @@ class MinesweeperWindow(QMainWindow):
                 if part == OPEN:
                     if mine == 0:
                         text = ' '
-                        im = QPixmap('ss.png')
+                        im = QPixmap(zero_png)
                     else:
                         text = str(self.game.mine_map[y][x])
-                        im = QPixmap('ss.png')
+                        im = QPixmap(nonzero_png(text))
                 elif part == FLAG:
                     text = flag_str
-                    im = QPixmap('ss.png')
+                    im = QPixmap(flag_png)
                 else:
                     text = close_str
-                    im = QPixmap('ss.png')
+                    im = QPixmap(close_png)
                 button = self.button_dic[(x, y)]
                 #button.setText(text)
                 button.setIcon(QIcon(im))
-                button.setIconSize(QSize(*iconsize))     
+                button.setIconSize(QSize(*iconsize))
                 button.set_bg_color(color_dic[part])
-                
-        
-        
+
+
+
 def main():
     app = QApplication(sys.argv)
     w = MinesweeperWindow()
     app.exec_()
-            
-    
+
+
 if __name__ == '__main__':
     main()
