@@ -26,10 +26,10 @@ color_dic = {CLOSE: 'gray', OPEN: 'blue', FLAG: 'yellow'}
 # アイコンを表示する？　pngで設定するとか？
 flag_str = 'P'
 close_str = 'x'
+iconsize = (50, 50)
 
 # ★今までに作成したコードからGameクラスをコピー★
 # コピーせずに上位ディレクトリからimportする方が保守的に良いため、その方法をとった。
-
 
 class MyPushButton(QPushButton):
     
@@ -113,11 +113,16 @@ class MinesweeperWindow(QMainWindow):
         for y in range(MS_SIZE-1, -1, -1):
             hbox = QHBoxLayout()
             for x in range(MS_SIZE):
-                button = MyPushButton(close_str, x, y, self)
+                #button = MyPushButton(close_str, x, y, self)
+                button = MyPushButton(None, x, y, self)
                 button.set_bg_color()
                 button.clicked.connect(button.on_click)
-                self.button_dic[(x, y)] = button
+                close_im = QPixmap('ss.png')
+                button.setIcon(QIcon(close_im))
+                button.setIconSize(QSize(*iconsize))     
                 hbox.addWidget(button)
+                self.button_dic[(x, y)] = button
+
             vbox.addLayout(hbox)
 
         container = QWidget()
@@ -137,14 +142,20 @@ class MinesweeperWindow(QMainWindow):
                 if part == OPEN:
                     if mine == 0:
                         text = ' '
+                        im = QPixmap('ss.png')
                     else:
                         text = str(self.game.mine_map[y][x])
+                        im = QPixmap('ss.png')
                 elif part == FLAG:
                     text = flag_str
+                    im = QPixmap('ss.png')
                 else:
                     text = close_str
+                    im = QPixmap('ss.png')
                 button = self.button_dic[(x, y)]
-                button.setText(text)
+                #button.setText(text)
+                button.setIcon(QIcon(im))
+                button.setIconSize(QSize(*iconsize))     
                 button.set_bg_color(color_dic[part])
                 
         
