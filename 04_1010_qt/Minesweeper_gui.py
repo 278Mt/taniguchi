@@ -111,7 +111,7 @@ class MinesweeperWindow(QMainWindow):
 
         vbox = QVBoxLayout(spacing=0)
         self.button_dic = {}
-        for y in range(MS_SIZE-1, -1, -1):
+        for y in reversed(range(MS_SIZE)):
             hbox = QHBoxLayout()
             for x in range(MS_SIZE):
                 button = MyPushButton(close_str, x, y, self)
@@ -131,7 +131,7 @@ class MinesweeperWindow(QMainWindow):
         """ ゲームボードを表示 """
         # ★以下，コードを追加★
         # なんだこの実装は。ゴミクズみたいなスパゲッティーコードを実装させるな。頭悪すぎ。こんなので社会に通用すると思うな。
-        for y in range(MS_SIZE-1, -1, -1):
+        for y in reversed(range(MS_SIZE)):
             for x in range(MS_SIZE):
                 part = self.game.game_board[y][x]
                 mine = self.game.mine_map[y][x]
