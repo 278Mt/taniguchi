@@ -11,36 +11,43 @@ URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui_o
 import sys
 from os.path import abspath
 dirname = abspath('../03_1003_Minesweeper')
-del abspath
 sys.path.append(dirname)
+del abspath
 from Minesweeper import Game
+sys.path.pop()
+im_dir = 'ms_im'
+nonzero_png = 'ms_im/{}.png'.format
+zero_png = '{}/zero.png'.format(im_dir)
+flag_png = '{}/flag.png'.format(im_dir)
+close_png = '{}/close.png'.format(im_dir)
+mine_png = '{}/mine.png'.format(im_dir)
 from PyQt5.QtWidgets import(
     QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox
 )
-from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import Qt, QSize
-
+from PyQt5.QtGui import(
+    QPixmap, QIcon
+)
+from PyQt5.QtCore import(
+    Qt, QSize
+)
 
 MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
-color_dic = {CLOSE: 'gray', OPEN: 'blue', FLAG: 'yellow'}
+MINE = -1
+color_dic = {CLOSE: 'gray', OPEN: 'blue', FLAG: 'yellow', MINE: 'red'}
 # アイコンを表示する？　pngで設定するとか？
 flag_str = 'P'
 close_str = 'x'
 iconsize = (50, 50)
-nonzero_png = '{}.png'.format
-zero_png = 'zero.png'
-flag_png = 'flag.png'
-close_png = 'close.png'
 
 # ★今までに作成したコードからGameクラスをコピー★
 # コピーせずに上位ディレクトリからimportする方が保守的に良いため、その方法をとった。
 
 class MyPushButton(QPushButton):
 
-    def __init__(self, text, x: int, y: int, parent):
+    def __init__(self, text: str, x: int, y: int, parent):
         """ セルに対応するボタンを生成 """
-        super(MyPushButton, self).__init__(text, parent)
+        super(MyPushButton, self).__init__(None, parent)
         self.parent = parent
         self.x = x
         self.y = y
@@ -80,12 +87,14 @@ class MyPushButton(QPushButton):
 
     def __game_over(self):
         print('ゲームオーバー!')
+        self.parent.show_result()
         QMessageBox.information(self, 'Game Over', 'ゲームオーバー！')
         self.parent.close()
 
 
     def __game_clear(self):
         print('ゲームクリア!')
+        self.parent.show_result()
         QMessageBox.information(self, 'Game Clear', 'ゲームクリア！')
         self.parent.close()
 
@@ -120,7 +129,7 @@ class MinesweeperWindow(QMainWindow):
             hbox = QHBoxLayout()
             for x in range(MS_SIZE):
                 #button = MyPushButton(close_str, x, y, self)
-                button = MyPushButton(None, x, y, self)
+                button = MyPushButton(close_str, x, y, self)
                 button.set_bg_color()
                 button.clicked.connect(button.on_click)
                 close_im = QPixmap(close_png)
@@ -140,29 +149,45 @@ class MinesweeperWindow(QMainWindow):
     def show_cell_status(self):
         """ ゲームボードを表示 """
         # ★以下，コードを追加★
-        # なんだこの実装は。ゴミクズみたいなスパゲッティーコードを実装させるな。頭悪すぎ。こんなので社会に通用すると思うな。
+        # like spaghetti
         for y in reversed(range(MS_SIZE)):
             for x in range(MS_SIZE):
                 part = self.game.game_board[y][x]
                 mine = self.game.mine_map[y][x]
                 if part == OPEN:
                     if mine == 0:
-                        text = ' '
                         im = QPixmap(zero_png)
                     else:
-                        text = str(self.game.mine_map[y][x])
-                        im = QPixmap(nonzero_png(text))
+                        im = QPixmap(nonzero_png(mine))
                 elif part == FLAG:
-                    text = flag_str
                     im = QPixmap(flag_png)
                 else:
-                    text = close_str
                     im = QPixmap(close_png)
                 button = self.button_dic[(x, y)]
-                #button.setText(text)
                 button.setIcon(QIcon(im))
                 button.setIconSize(QSize(*iconsize))
                 button.set_bg_color(color_dic[part])
+
+
+    def show_result(self):
+
+        for y in reversed(range(MS_SIZE)):
+            for x in range(MS_SIZE):
+                part = self.game.game_board[y][x]
+                mine = self.game.mine_map[y][x]
+
+                if mine == MINE:
+                    im = QPixmap(mine_png)
+                elif mine == 0:
+                    im = QPixmap(zero_png)
+                else:
+                    im = QPixmap(nonzero_png(mine))
+
+                button = self.button_dic[(x, y)]
+                button.setIcon(QIcon(im))
+                button.setIconSize(QSize(*iconsize))
+                button.set_bg_color(color_dic[MINE if mine==MINE else OPEN])
+
 
 
 

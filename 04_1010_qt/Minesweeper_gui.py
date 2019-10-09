@@ -17,7 +17,6 @@ from Minesweeper import Game
 from PyQt5.QtWidgets import(
     QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox
 )
-#from PyQt5.QtGui import *
 from PyQt5.QtCore import Qt
 
 
@@ -34,7 +33,7 @@ close_str = 'x'
 
 class MyPushButton(QPushButton):
 
-    def __init__(self, text, x: int, y: int, parent):
+    def __init__(self, text: str, x: int, y: int, parent):
         """ セルに対応するボタンを生成 """
         super(MyPushButton, self).__init__(text, parent)
         self.parent = parent
@@ -130,7 +129,7 @@ class MinesweeperWindow(QMainWindow):
     def show_cell_status(self):
         """ ゲームボードを表示 """
         # ★以下，コードを追加★
-        # なんだこの実装は。ゴミクズみたいなスパゲッティーコードを実装させるな。頭悪すぎ。こんなので社会に通用すると思うな。
+        # like spaghetti
         for y in reversed(range(MS_SIZE)):
             for x in range(MS_SIZE):
                 part = self.game.game_board[y][x]
@@ -139,7 +138,7 @@ class MinesweeperWindow(QMainWindow):
                     if mine == 0:
                         text = ' '
                     else:
-                        text = str(self.game.mine_map[y][x])
+                        text = str(mine)
                 elif part == FLAG:
                     text = flag_str
                 else:
