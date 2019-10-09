@@ -14,10 +14,11 @@ dirname = abspath('../03_1003_Minesweeper')
 del abspath
 sys.path.append(dirname)
 from Minesweeper import Game
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-import random
+from PyQt5.QtWidgets import(
+    QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox
+)
+#from PyQt5.QtGui import *
+from PyQt5.QtCore import Qt
 
 
 MS_SIZE = 8          # ゲームボードのサイズ
@@ -32,7 +33,7 @@ close_str = 'x'
 
 
 class MyPushButton(QPushButton):
-    
+
     def __init__(self, text, x: int, y: int, parent):
         """ セルに対応するボタンを生成 """
         super(MyPushButton, self).__init__(text, parent)
@@ -42,7 +43,7 @@ class MyPushButton(QPushButton):
         self.setMinimumSize(20, 20)
         self.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
 
-        
+
     def set_bg_color(self, colorname: str='gray'):
         """ セルの色を指定する
         Arguments:
@@ -50,8 +51,8 @@ class MyPushButton(QPushButton):
             colorname: 文字列 -- 色名 (例, "white")
         """
         self.setStyleSheet("MyPushButton{{background-color: {}}}".format(colorname))
-        
-        
+
+
     def on_click(self):
         """ セルをクリックしたときの動作 """
         # ★以下，コードを追加★
@@ -65,41 +66,41 @@ class MyPushButton(QPushButton):
         else:
             if game.open_cell(x, y) == False:
                 self.__game_over()
-                
+
         if game.is_finished():
             self.__game_clear()
-            
+
         self.parent.show_cell_status()
 
-                
+
     def __game_over(self):
         print("ゲームオーバー!")
         QMessageBox.information(self, "Game Over", "ゲームオーバー！")
         self.parent.close()
 
-    
+
     def __game_clear(self):
         print("ゲームクリア!")
         QMessageBox.information(self, "Game Clear", "ゲームクリア！")
         self.parent.close()
 
 
-    
+
 class MinesweeperWindow(QMainWindow):
-    
+
     def __init__(self):
         """ インスタンスが生成されたときに呼び出されるメソッド """
         print('RUNNING PROGRAMME')
         super(MinesweeperWindow, self).__init__()
         self.game = Game()
         self.initUI()
-    
-    
+
+
     def initUI(self):
-        """ UIの初期化 """        
+        """ UIの初期化 """
         self.resize(500, 500)
         self.setWindowTitle('Minesweeper')
-        
+
         # ★以下，コードを追加★
         self.statusBar().showMessage('Shift+クリックでフラグをセット')  # ステータスバーに文言と表示
         self.__call_game_board()
@@ -146,14 +147,14 @@ class MinesweeperWindow(QMainWindow):
                 button = self.button_dic[(x, y)]
                 button.setText(text)
                 button.set_bg_color(color_dic[part])
-                
-        
-        
+
+
+
 def main():
     app = QApplication(sys.argv)
     w = MinesweeperWindow()
     app.exec_()
-            
-    
+
+
 if __name__ == '__main__':
     main()

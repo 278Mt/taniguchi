@@ -14,10 +14,11 @@ dirname = abspath('../03_1003_Minesweeper')
 del abspath
 sys.path.append(dirname)
 from Minesweeper import Game
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-import random
+from PyQt5.QtWidgets import(
+    QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox
+)
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import Qt, QSize
 
 
 MS_SIZE = 8          # ゲームボードのサイズ
@@ -62,6 +63,7 @@ class MyPushButton(QPushButton):
         game = self.parent.game
         x, y = self.x, self.y
         print('condition: {}, x: {}, y: {}'.format(self.text(), x, y))
+        # スタックオーバーフローに掲載されていた方法を用いる
         # https://stackoverflow.com/questions/28588363/how-to-check-if-ctrl-and-shift-are-pressed-simultaneously-in-pyqt
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
             print('フラグを立てます')
