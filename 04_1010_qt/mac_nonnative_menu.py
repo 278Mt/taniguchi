@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+"""
+Created on Wed Oct  9 10:48:07 2019
+
+マインスイーパー
+URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/mac_nonnative_menu.py
+@author: n_toba
+@id: 4617054
+"""
 import sys
 from PyQt5.QtWidgets import(
     QMainWindow, QAction, QApplication

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python3
 """
-Created on Thu Sep 26 17:12:07 2019
+Created on Wed Oct  9 10:47:54 2019
 
 マインスイーパー
-URL: https://github.com/278Mt/taniguchi/blob/master/
+URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui_opt.py
 @author: n_toba
 @id: 4617054
 """
