@@ -52,9 +52,9 @@ class MyPushButton(QPushButton):
         """ セルの色を指定する
         Arguments:
             self
-            colorname: 文字列 -- 色名 (例, "white")
+            colorname: 文字列 -- 色名 (例, 'white')
         """
-        self.setStyleSheet("MyPushButton{{background-color: {}}}".format(colorname))
+        self.setStyleSheet('MyPushButton{{background-color: {}}}'.format(colorname))
 
 
     def on_click(self):
@@ -62,7 +62,7 @@ class MyPushButton(QPushButton):
         # ★以下，コードを追加★
         game = self.parent.game
         x, y = self.x, self.y
-        print('condition: {}, x: {}, y: {}'.format(self.text(), x, y))
+        print('x: {}, y: {}'.format(x, y))
         # スタックオーバーフローに掲載されていた方法を用いる
         # https://stackoverflow.com/questions/28588363/how-to-check-if-ctrl-and-shift-are-pressed-simultaneously-in-pyqt
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
@@ -79,14 +79,14 @@ class MyPushButton(QPushButton):
 
 
     def __game_over(self):
-        print("ゲームオーバー!")
-        QMessageBox.information(self, "Game Over", "ゲームオーバー！")
+        print('ゲームオーバー!')
+        QMessageBox.information(self, 'Game Over', 'ゲームオーバー！')
         self.parent.close()
 
 
     def __game_clear(self):
-        print("ゲームクリア!")
-        QMessageBox.information(self, "Game Clear", "ゲームクリア！")
+        print('ゲームクリア!')
+        QMessageBox.information(self, 'Game Clear', 'ゲームクリア！')
         self.parent.close()
 
 
