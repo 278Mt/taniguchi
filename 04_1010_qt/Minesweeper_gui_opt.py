@@ -21,13 +21,16 @@ URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui_o
 """
 import sys
 from os.path import(
-    abspath,
-    isfile,
-    isdir
+    abspath, dirname, isfile, isdir
 )
 # Minesweeperのバックエンド処理を親ディレクトリからimportする。
 # 余分なImportErrorを引き起こさないために、パスをポップしておく
-dirname = abspath('../03_1003_Minesweeper')
+# Jupyterで起動しても大丈夫なように書き換えた。
+if 'get_ipython' in globals() and get_ipython().__class__.__name__ != 'TerminalInteractiveShell':
+    FPATH = dirname(abspath('__file__')) + '/../'
+else:
+    FPATH = __file__[:-len(__file__.split('/')[-1])]
+dirname = abspath(FPATH + '../03_1003_Minesweeper')
 if isdir(dirname) or isfile('Minesweeper.py'):
     sys.path.append(dirname)
     from Minesweeper import Game
@@ -128,7 +131,7 @@ class MinesweeperWindow(QMainWindow):
         super(MinesweeperWindow, self).__init__()
 
         # 画像の設定
-        im_dir = 'ms_im'
+        im_dir = '{}/ms_im'.format(FPATH)
         png_dic = {
             CLOSE   : 'close',
             OPEN    : {i: i for i in range(8+1)},
@@ -178,8 +181,9 @@ class MinesweeperWindow(QMainWindow):
     def __menuBarUI(self):
 
         # ヘルプの文章を取り出す
-        if isfile('help.txt'):
-            with open('help.txt', mode='r') as file:
+        help_path = '{}/help.txt'.format(FPATH)
+        if isfile(help_path):
+            with open(help_path, mode='r') as file:
                 help_text = file.read()
         else:
             help_text = 'ヘルプを表示します。'
