@@ -22,10 +22,14 @@ from PyQt5.QtCore import Qt
 
 MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
-color_dic = {CLOSE: 'gray', OPEN: 'blue', FLAG: 'yellow'}
+COLOR_DIC = {
+    CLOSE: 'gray',
+    OPEN : 'blue',
+    FLAG : 'yellow'
+}
 # アイコンを表示する？　pngで設定するとか？
-flag_str = 'P'
-close_str = 'x'
+FLAG_STR = 'P'
+CLOSE_STR = 'x'
 
 # ★今までに作成したコードからGameクラスをコピー★
 # コピーせずに上位ディレクトリからimportする方が保守的に良いため、その方法をとった。
@@ -113,7 +117,7 @@ class MinesweeperWindow(QMainWindow):
         for y in reversed(range(MS_SIZE)):
             hbox = QHBoxLayout()
             for x in range(MS_SIZE):
-                button = MyPushButton(close_str, x, y, self)
+                button = MyPushButton(CLOSE_STR, x, y, self)
                 button.set_bg_color()
                 button.clicked.connect(button.on_click)
                 self.button_dic[(x, y)] = button
@@ -140,12 +144,12 @@ class MinesweeperWindow(QMainWindow):
                     else:
                         text = str(mine)
                 elif part == FLAG:
-                    text = flag_str
+                    text = FLAG_STR
                 else:
-                    text = close_str
+                    text = CLOSE_STR
                 button = self.button_dic[(x, y)]
                 button.setText(text)
-                button.set_bg_color(color_dic[part])
+                button.set_bg_color(COLOR_DIC[part])
 
 
 

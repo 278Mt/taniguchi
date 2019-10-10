@@ -35,14 +35,14 @@ if isdir(dirname) or isfile('Minesweeper.py'):
 else:
     raise FileNotFoundError('指定されたディレクトリにファイルがありません<dirname: {}>'.format(dirname))
 # オプション: 数字やxなどの代わりに、画像を表示するように工夫した。
-im_dir = 'ms_im'
-nonzero_png = 'ms_im/{}.png'.format
-zero_png = '{}/zero.png'.format(im_dir)
-flag_png = '{}/flag.png'.format(im_dir)
-close_png = '{}/close.png'.format(im_dir)
-mine_png = '{}/mine.png'.format(im_dir)
-nonmine_png = '{}/nonmine.png'.format(im_dir)
-flag_mine_png = '{}/flag-mine.png'.format(im_dir)
+IM_DIR = 'ms_im'
+NONZERO_PNG = 'ms_im/{}.png'.format
+ZERO_PNG = '{}/zero.png'.format(IM_DIR)
+FLAG_PNG = '{}/flag.png'.format(IM_DIR)
+CLOSE_PNG = '{}/close.png'.format(IM_DIR)
+MINE_PNG = '{}/mine.png'.format(IM_DIR)
+NONMINE_PNG = '{}/nonmine.png'.format(IM_DIR)
+FLAGMINE_PNG = '{}/flag-mine.png'.format(IM_DIR)
 # 何をどこでimportしたか分かるようにするために書き換えた。
 from PyQt5.QtWidgets import(
     QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox, QAction
@@ -57,7 +57,7 @@ from PyQt5.QtCore import(
 MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
 MINE, NONMINE, FLAGMINE = -1, -2, -3
-color_dic = {
+COLOR_DIC = {
     CLOSE  : 'gray',
     OPEN   : 'blue',
     FLAG   : 'yellow',
@@ -66,10 +66,10 @@ color_dic = {
     FLAGMINE: 'teal'
 }
 # アイコンを表示する？　pngで設定するとか？
-flag_str = 'P'
-close_str = 'x'
-iconsize = (50, 50)
-status_bar_text = 'Shift+クリックでフラグをセット(フラグ数: {}, 予想残り地雷数: {})'.format
+FLAG_STR = 'P'
+CLOSE_STR = 'x'
+ICONSIZE = (50, 50)
+STATUSBAR_STR = 'Shift+クリックでフラグをセット(フラグ数: {}, 予想残り地雷数: {})'.format
 
 # ★今までに作成したコードからGameクラスをコピー★
 # コピーせずに上位ディレクトリからimportする方が保守的に良いため、その方法をとった。
@@ -121,7 +121,7 @@ class MyPushButton(QPushButton):
         number_of_residue = self.parent.number_of_mines-number_of_flags
         if number_of_residue < 0:
             number_of_residue = str(number_of_residue) + '?'
-        self.parent.sb.showMessage(status_bar_text(number_of_flags, number_of_residue))
+        self.parent.sb.showMessage(STATUSBAR_STR(number_of_flags, number_of_residue))
 
 
     def __game_over(self):
@@ -160,7 +160,7 @@ class MinesweeperWindow(QMainWindow):
         # ★以下，コードを追加★
         self.number_of_mines = self.game.flatten_count(self.game.mine_map, MINE)
         self.sb = self.statusBar()
-        self.sb.showMessage(status_bar_text(0, self.number_of_mines))  # ステータスバーに文言と表示
+        self.sb.showMessage(STATUSBAR_STR(0, self.number_of_mines))  # ステータスバーに文言と表示
         self.__call_game_board()
 
 
@@ -196,13 +196,13 @@ class MinesweeperWindow(QMainWindow):
         for y in reversed(range(MS_SIZE)):
             hbox = QHBoxLayout()
             for x in range(MS_SIZE):
-                #button = MyPushButton(close_str, x, y, self)
-                button = MyPushButton(close_str, x, y, self)
+                #button = MyPushButton(CLOSE_STR, x, y, self)
+                button = MyPushButton(CLOSE_STR, x, y, self)
                 button.set_bg_color()
                 button.clicked.connect(button.on_click)
-                close_im = QPixmap(close_png)
+                close_im = QPixmap(CLOSE_PNG)
                 button.setIcon(QIcon(close_im))
-                button.setIconSize(QSize(*iconsize))
+                button.setIconSize(QSize(*ICONSIZE))
                 hbox.addWidget(button)
                 self.button_dic[(x, y)] = button
 
@@ -224,29 +224,29 @@ class MinesweeperWindow(QMainWindow):
                 mine = self.game.mine_map[y][x]
                 if part == OPEN:
                     if mine == 0:
-                        im = QPixmap(zero_png)
+                        im = QPixmap(ZERO_PNG)
                     else:
-                        im = QPixmap(nonzero_png(mine))
+                        im = QPixmap(NONZERO_PNG(mine))
                 elif part == FLAG:
-                    im = QPixmap(flag_png)
+                    im = QPixmap(FLAG_PNG)
                 else:
-                    im = QPixmap(close_png)
+                    im = QPixmap(CLOSE_PNG)
                 button = self.button_dic[(x, y)]
                 button.setIcon(QIcon(im))
-                button.setIconSize(QSize(*iconsize))
-                button.set_bg_color(color_dic[part])
+                button.setIconSize(QSize(*ICONSIZE))
+                button.set_bg_color(COLOR_DIC[part])
 
 
     def show_result(self, isclear: bool=True):
 
         if not isclear:
-            color_dic[MINE] = 'red'
-            color_dic[FLAGMINE] = 'fuchsia'
+            COLOR_DIC[MINE] = 'red'
+            COLOR_DIC[FLAGMINE] = 'fuchsia'
             # global宣言をしないと、存在しないローカル変数を呼び出すことになる。これはPython上の仕様である。
-            global mine_png
-            mine_png = '{}/explode.png'.format(im_dir)
-            global flag_mine_png
-            flag_mine_png = '{}/flag-explode.png'.format(im_dir)
+            global MINE_PNG
+            MINE_PNG = '{}/explode.png'.format(IM_DIR)
+            global FLAGMINE_PNG
+            FLAGMINE_PNG = '{}/flag-explode.png'.format(IM_DIR)
 
         for y in reversed(range(MS_SIZE)):
             for x in range(MS_SIZE):
@@ -254,24 +254,24 @@ class MinesweeperWindow(QMainWindow):
                 mine = self.game.mine_map[y][x]
 
                 if mine == MINE and part == FLAG:
-                    im = QPixmap(flag_mine_png)
-                    color = color_dic[FLAGMINE]
+                    im = QPixmap(FLAGMINE_PNG)
+                    color = COLOR_DIC[FLAGMINE]
                 elif mine == MINE:
-                    im = QPixmap(mine_png)
-                    color = color_dic[MINE]
+                    im = QPixmap(MINE_PNG)
+                    color = COLOR_DIC[MINE]
                 elif mine != MINE and part == FLAG:
-                    im = QPixmap(nonmine_png)
-                    color = color_dic[NONMINE]
+                    im = QPixmap(NONMINE_PNG)
+                    color = COLOR_DIC[NONMINE]
                 elif mine == 0:
-                    im = QPixmap(zero_png)
-                    color = color_dic[OPEN]
+                    im = QPixmap(ZERO_PNG)
+                    color = COLOR_DIC[OPEN]
                 else:
-                    im = QPixmap(nonzero_png(mine))
-                    color = color_dic[OPEN]
+                    im = QPixmap(NONZERO_PNG(mine))
+                    color = COLOR_DIC[OPEN]
 
                 button = self.button_dic[(x, y)]
                 button.setIcon(QIcon(im))
-                button.setIconSize(QSize(*iconsize))
+                button.setIconSize(QSize(*ICONSIZE))
                 button.set_bg_color(color)
 
 
