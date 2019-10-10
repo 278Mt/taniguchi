@@ -25,12 +25,7 @@ from os.path import(
 )
 # Minesweeperのバックエンド処理を親ディレクトリからimportする。
 # 余分なImportErrorを引き起こさないために、パスをポップしておく
-# Jupyterで起動しても大丈夫なように書き換えた。
-if 'get_ipython' in globals() and get_ipython().__class__.__name__ != 'TerminalInteractiveShell':
-    FPATH = dirname(abspath('__file__')) + '/../'
-else:
-    FPATH = __file__[:-len(__file__.split('/')[-1])]
-dirname = abspath(FPATH + '../03_1003_Minesweeper')
+dirname = abspath('../03_1003_Minesweeper')
 if isdir(dirname) or isfile('Minesweeper.py'):
     sys.path.append(dirname)
     from Minesweeper import Game
@@ -131,7 +126,7 @@ class MinesweeperWindow(QMainWindow):
         super(MinesweeperWindow, self).__init__()
 
         # 画像の設定
-        im_dir = '{}/ms_im'.format(FPATH)
+        im_dir = 'ms_im'
         png_dic = {
             CLOSE   : 'close',
             OPEN    : {i: i for i in range(8+1)},
@@ -181,7 +176,7 @@ class MinesweeperWindow(QMainWindow):
     def __menuBarUI(self):
 
         # ヘルプの文章を取り出す
-        help_path = '{}/help.txt'.format(FPATH)
+        help_path = 'help.txt'
         if isfile(help_path):
             with open(help_path, mode='r') as file:
                 help_text = file.read()
