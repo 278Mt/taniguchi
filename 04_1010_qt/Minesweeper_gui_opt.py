@@ -22,14 +22,18 @@ URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui_o
 import sys
 from os.path import(
     abspath,
-    isfile
+    isfile,
+    isdir
 )
 # Minesweeperのバックエンド処理を親ディレクトリからimportする。
 # 余分なImportErrorを引き起こさないために、パスをポップしておく
 dirname = abspath('../03_1003_Minesweeper')
-sys.path.append(dirname)
-from Minesweeper import Game
-sys.path.pop()
+if isdir(dirname) or isfile('Minesweeper.py'):
+    sys.path.append(dirname)
+    from Minesweeper import Game
+    sys.path.pop()
+else:
+    raise FileNotFoundError('指定されたディレクトリにファイルがありません<dirname: {}>'.format(dirname))
 # オプション: 数字やxなどの代わりに、画像を表示するように工夫した。
 im_dir = 'ms_im'
 nonzero_png = 'ms_im/{}.png'.format
