@@ -33,7 +33,7 @@ def timer(fn):
 class Game(object):
 
 
-    def __init__(self, number_of_mines: int=10):
+    def __init__(self, number_of_mines: int=10, size: int=8):
         """ ゲームボードの初期化
 
         Arguments:
@@ -44,6 +44,8 @@ class Game(object):
         game_board[][] -- 盤面 (0: CLOSE(初期状態), 1: 開いた状態, 2: フラグ)
 
         """
+        global MS_SIZE
+        MS_SIZE = size
         self.init_game_board()
         self.init_mine_map(number_of_mines)
         self.count_mines()
