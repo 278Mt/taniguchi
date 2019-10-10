@@ -37,7 +37,7 @@ from PyQt5.QtCore import(
     Qt, QSize
 )
 
-MS_SIZE = 10          # ゲームボードのサイズ
+MS_SIZE = 8          # ゲームボードのサイズ
 CLOSE, OPEN, FLAG = 0, 1, 2
 MINE, NONMINE, FLAGMINE = -1, -2, -3
 color_dic = {
@@ -128,7 +128,7 @@ class MinesweeperWindow(QMainWindow):
         """ インスタンスが生成されたときに呼び出されるメソッド """
         print('RUNNING PROGRAMME')
         super(MinesweeperWindow, self).__init__()
-        self.game = Game(number_of_mines=20, size=MS_SIZE)
+        self.game = Game(number_of_mines=10, size=MS_SIZE)
         self.initUI()
 
 

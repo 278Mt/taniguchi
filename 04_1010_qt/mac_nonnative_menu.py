@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import(
     QMainWindow, QAction, QApplication
 )
 import datetime
+from socket import gethostname as gh
+if 'ouka' not in gh(): raise ImportError('someting wrong')
 
 
 class MyWindow(QMainWindow):
