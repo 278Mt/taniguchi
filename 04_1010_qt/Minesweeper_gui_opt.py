@@ -4,17 +4,30 @@
 Created on Wed Oct  9 10:47:54 2019
 
 マインスイーパー
+ディレクトリ構成
+.
+|- 03_1003_Minesweeper
+|  |- Minesweeper.py
+|
+|- 04_1010_qt
+   |- Minesweeper_gui_opt.py
+   |- help.txt
+   |- ms_im
+      |- *.png
+
 URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui_opt.py
 @author: n_toba
 @id: 4617054
 """
 import sys
-from os.path import abspath
+from os.path import(
+    abspath,
+    isfile
+)
 # Minesweeperのバックエンド処理を親ディレクトリからimportする。
-# 無駄なImportErrorを引き起こさないようにするために、変数を殺したりポップしたりする。
+# 余分なImportErrorを引き起こさないために、パスをポップしておく
 dirname = abspath('../03_1003_Minesweeper')
 sys.path.append(dirname)
-del abspath
 from Minesweeper import Game
 sys.path.pop()
 # オプション: 数字やxなどの代わりに、画像を表示するように工夫した。
@@ -28,7 +41,7 @@ nonmine_png = '{}/nonmine.png'.format(im_dir)
 flag_mine_png = '{}/flag-mine.png'.format(im_dir)
 # 何をどこでimportしたか分かるようにするために書き換えた。
 from PyQt5.QtWidgets import(
-    QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox
+    QPushButton, QMainWindow, QApplication, QVBoxLayout, QHBoxLayout, QSizePolicy, QWidget, QMessageBox, QAction
 )
 from PyQt5.QtGui import(
     QPixmap, QIcon
@@ -87,10 +100,10 @@ class MyPushButton(QPushButton):
         # スタックオーバーフローに掲載されていた方法を用いる
         # https://stackoverflow.com/questions/28588363/how-to-check-if-ctrl-and-shift-are-pressed-simultaneously-in-pyqt
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
-            print('フラグを立てます')
+            print('フラグを立てます<x: {}, y: {}>'.format(x, y))
             game.flag_cell(x, y)
         else:
-            print('セルを開けます')
+            print('セルを開けます<x: {}, y: {}>'.format(x, y))
             if game.open_cell(x, y) == False:
                 self.__game_over()
 
@@ -137,11 +150,38 @@ class MinesweeperWindow(QMainWindow):
         self.resize(500, 500)
         self.setWindowTitle('Minesweeper')
 
+        # menubarを追加
+        self.__menuBarUI()
+
         # ★以下，コードを追加★
         self.number_of_mines = self.game.flatten_count(self.game.mine_map, MINE)
         self.sb = self.statusBar()
         self.sb.showMessage(status_bar_text(0, self.number_of_mines))  # ステータスバーに文言と表示
         self.__call_game_board()
+
+
+    def __menuBarUI(self):
+
+        # ヘルプの文章を取り出す
+        if isfile('help.txt'):
+            with open('help.txt', mode='r') as file:
+                help_text = file.read()
+        else:
+            help_text = 'ヘルプを表示します。'
+
+        helpAction = QAction('&Help', self)
+        helpAction.triggered.connect(lambda: QMessageBox.information(self, 'Help', help_text))
+        exitAction = QAction('&Exit', self)
+        exitAction.triggered.connect(self.close)
+        menubar = self.menuBar()
+        # macの場合はこれを書かないとちゃんと動作しないよ
+        from platform import system
+        if system() == 'Darwin':
+            menubar.setNativeMenuBar(False)
+            del system
+        fileMenu = menubar.addMenu('&Tool')
+        fileMenu.addAction(helpAction)
+        fileMenu.addAction(exitAction)
 
 
     def __call_game_board(self):
