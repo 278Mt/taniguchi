@@ -155,7 +155,7 @@ class MinesweeperWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    w = MinesweeperWindow()
+    MinesweeperWindow()
     app.exec_()
 
 

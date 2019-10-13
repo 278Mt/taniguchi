@@ -21,7 +21,7 @@ URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui_o
 """
 import sys
 from os.path import(
-    abspath, dirname, isfile, isdir
+    abspath, isfile, isdir
 )
 # Minesweeperのバックエンド処理を親ディレクトリからimportする。
 # 余分なImportErrorを引き起こさないために、パスをポップしておく
@@ -127,33 +127,24 @@ class MinesweeperWindow(QMainWindow):
 
         # 画像の設定
         im_dir = 'ms_im'
-        png_dic = {
-            CLOSE   : 'close',
-            OPEN    : {i: i for i in range(8+1)},
-            FLAG    : 'flag',
-            MINE    : 'mine',
-            NONMINE : 'nonmine',
-            FLAGMINE: 'flagmine'
+        im_dic = {
+            CLOSE   : {'color': 'gray',   'png': 'close'},
+            OPEN    : {'color': 'blue',   'png': {i: i for i in range(8+1)}},
+            FLAG    : {'color': 'yellow', 'png': 'flag'},
+            MINE    : {'color': 'aqua',   'png': 'mine'},
+            NONMINE : {'color': 'navy',   'png': 'nonmine'},
+            FLAGMINE: {'color': 'teal',   'png': 'flagmine'}
         }
-        color_dic = {
-            CLOSE   : 'gray',
-            OPEN    : 'blue',
-            FLAG    : 'yellow',
-            MINE    : 'aqua',
-            NONMINE : 'navy',
-            FLAGMINE: 'teal'
-        }
-        for key in png_dic:
+        for key in im_dic:
             if key == OPEN:
-                for num in png_dic[key]:
-                    png_dic[key][num] = QIcon(QPixmap('{}/{}.png'.format(im_dir, num)))
+                for num in im_dic[key]['png']:
+                    im_dic[key]['png'][num] = QIcon(QPixmap('{}/{}.png'.format(im_dir, num)))
 
             else:
-                png_dic[key] = QIcon(QPixmap('{}/{}.png'.format(im_dir, png_dic[key])))
+                im_dic[key]['png'] = QIcon(QPixmap('{}/{}.png'.format(im_dir, im_dic[key]['png'])))
 
-        self.png_dic = png_dic
-        self.color_dic = color_dic
         self.im_dir = im_dir
+        self.im_dic = im_dic
         self.game = Game(number_of_mines=10, size=MS_SIZE)
         self.initUI()
 
@@ -209,7 +200,7 @@ class MinesweeperWindow(QMainWindow):
                 button = MyPushButton('x', x, y, self)
                 button.set_bg_color()
                 button.clicked.connect(button.on_click)
-                button.setIcon(self.png_dic[CLOSE])
+                button.setIcon(self.im_dic[CLOSE]['png'])
                 button.setIconSize(QSize(*self.iconsize))
                 hbox.addWidget(button)
                 self.button_dic[(x, y)] = button
@@ -226,35 +217,33 @@ class MinesweeperWindow(QMainWindow):
         """ ゲームボードを表示 """
         # ★以下，コードを追加★
         # like spaghetti
-        png_dic = self.png_dic
-        color_dic = self.color_dic
+        im_dic = self.im_dic
         for y in reversed(range(MS_SIZE)):
             for x in range(MS_SIZE):
                 part = self.game.game_board[y][x]
                 mine = self.game.mine_map[y][x]
                 if part == OPEN:
-                    im = png_dic[OPEN][mine]
+                    im = im_dic[OPEN]['png'][mine]
                 elif part == FLAG:
-                    im = png_dic[FLAG]
+                    im = im_dic[FLAG]['png']
                 else:
-                    im = png_dic[CLOSE]
+                    im = im_dic[CLOSE]['png']
                 button = self.button_dic[(x, y)]
                 button.setIcon(im)
                 button.setIconSize(QSize(*self.iconsize))
-                button.set_bg_color(color_dic[part])
+                button.set_bg_color(im_dic[part]['color'])
 
 
     def show_result(self, isclear: bool=True):
 
-        png_dic = self.png_dic
-        color_dic = self.color_dic
+        im_dic = self.im_dic
         if not isclear:
-            color_dic[MINE] = 'red'
-            color_dic[FLAGMINE] = 'fuchsia'
+            im_dic[MINE]['color'] = 'red'
+            im_dic[FLAGMINE]['color'] = 'fuchsia'
             # global宣言をしないと、存在しないローカル変数を呼び出すことになる。これはPython上の仕様である。
 
-            png_dic[MINE] = QIcon(QPixmap('{}/explode.png'.format(self.im_dir)))
-            png_dic[FLAGMINE] = QIcon(QPixmap('{}/flagexplode.png'.format(self.im_dir)))
+            im_dic[MINE]['png'] = QIcon(QPixmap('{}/explode.png'.format(self.im_dir)))
+            im_dic[FLAGMINE]['png'] = QIcon(QPixmap('{}/flagexplode.png'.format(self.im_dir)))
 
         for y in reversed(range(MS_SIZE)):
             for x in range(MS_SIZE):
@@ -262,17 +251,17 @@ class MinesweeperWindow(QMainWindow):
                 mine = self.game.mine_map[y][x]
 
                 if mine == MINE and part == FLAG:
-                    im = png_dic[FLAGMINE]
-                    color = color_dic[FLAGMINE]
+                    im = im_dic[FLAGMINE]['png']
+                    color = im_dic[FLAGMINE]['color']
                 elif mine == MINE:
-                    im = png_dic[MINE]
-                    color = color_dic[MINE]
+                    im = im_dic[MINE]['png']
+                    color = im_dic[MINE]['color']
                 elif mine != MINE and part == FLAG:
-                    im = png_dic[NONMINE]
-                    color = color_dic[NONMINE]
+                    im = im_dic[NONMINE]['png']
+                    color = im_dic[NONMINE]['color']
                 else:
-                    im = png_dic[OPEN][mine]
-                    color = color_dic[OPEN]
+                    im = im_dic[OPEN]['png'][mine]
+                    color = im_dic[OPEN]['color']
 
                 button = self.button_dic[(x, y)]
                 button.setIcon(QIcon(im))
