@@ -8,8 +8,23 @@ URL: https://github.com/278Mt/taniguchi/blob/master/04_1010_qt/Minesweeper_gui.p
 @author: n_toba
 @id: 4617054
 """
+
+"""
+文字列を検索する方法
+emacs          -> Ctrl-S または Command-S + 文字列
+vim            -> /(スラッシュ)           + 文字列
+VS Code        -> Ctrl-F または Command-F + 文字列
+jupyter        -> Ctrl-F または Command-F + 文字列
+spyder         -> Ctrl-F または Command-F + 文字列
+atom           -> Ctrl-F (? たぶん)       + 文字列
+xcode          -> 氏ね。Pythonでxcode使うな。(たぶんCommand-F + 文字列)
+他のエディター -> 知らないけどたぶん Ctrl-F か Command-F をすれば出てくると思う。ググれば出てくるし便利。
+"""
+
 import sys
 from os.path import abspath
+# 捜索するディレクトリにさっきの dirname を追加。こうすることで、 Minesweeper.py から Game をラクに import できる
+# sys.path.append についてはググって。
 dirname = abspath('../03_1003_Minesweeper')
 del abspath
 sys.path.append(dirname)
@@ -27,14 +42,14 @@ COLOR_DIC = {
     OPEN : 'blue',
     FLAG : 'yellow'
 }
-# アイコンを表示する？　pngで設定するとか？
 FLAG_STR = 'P'
 CLOSE_STR = 'x'
 
 # ★今までに作成したコードからGameクラスをコピー★
-# コピーせずに上位ディレクトリからimportする方が保守的に良いため、その方法をとった。
+# コピーせずに上位ディレクトリから import する方が保守的に良いため、その方法をとった。
 
 
+# button に関する。ここが一番面倒だと思う。
 class MyPushButton(QPushButton):
 
     def __init__(self, text: str, x: int, y: int, parent):
@@ -106,6 +121,7 @@ class MinesweeperWindow(QMainWindow):
 
         # ★以下，コードを追加★
         self.statusBar().showMessage('Shift+クリックでフラグをセット')  # ステータスバーに文言と表示
+        # game board の召喚は下に書く。こうすることで可読性が上がる。
         self.__call_game_board()
 
 
@@ -114,11 +130,19 @@ class MinesweeperWindow(QMainWindow):
 
         vbox = QVBoxLayout(spacing=0)
         self.button_dic = {}
+        # reversed 自体は書く必要ないけど、あった方が最初に作った Game における座標との整合性が取りやすくなる。
         for y in reversed(range(MS_SIZE)):
             hbox = QHBoxLayout()
             for x in range(MS_SIZE):
+                # MyPushButton の引数の parent はこのクラスが生成されるときにできるインスタンス自体。
+                # と言われてもピンとこない人には、「とりあえず書かなきゃならないやつ」というふうに説明。
+                # というか、このプログラムの著者本人も最初 1 時間くらい、 MyPushButton の中に parent がある訳がわからなかった。
                 button = MyPushButton(CLOSE_STR, x, y, self)
                 button.set_bg_color()
+
+                # button と関数をつなげる。
+                # ここで button.clicked.connect(lambda: button.on_click()) とカッコよく lambda でキメちゃったりすると、
+                # 開示座標が x, y == 7, 0 で固定されてしまうので注意。理由は鳥羽もよくわかってないです。m(__)m
                 button.clicked.connect(button.on_click)
                 self.button_dic[(x, y)] = button
                 hbox.addWidget(button)
@@ -147,6 +171,7 @@ class MinesweeperWindow(QMainWindow):
                     text = FLAG_STR
                 else:
                     text = CLOSE_STR
+                # ここで button を書き換える操作を記述する。
                 button = self.button_dic[(x, y)]
                 button.setText(text)
                 button.set_bg_color(COLOR_DIC[part])
