@@ -46,6 +46,9 @@ class SeamCarving():
             self.window.pbar.setValue((width-i)/(width-MIN_WIDTH-1)*100)
             qApp.processEvents()
 
+        # 最終画像の保存
+        cv2.imwrite('output.jpg', prev_img)
+
         """"""""" 終わったら進捗バーを非表示 """""""""
         self.window.pbar.hide()
 
@@ -55,7 +58,10 @@ class SeamCarving():
         # ★以下，コードを追加（STEP 1）★
         # maybe clear
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # matplotlibによる画像の表示のためRGBの順に変換
-        dst = cv2.Laplacian(img, cv2.CV_64F)
+        xsobel = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
+        ysobel = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
+        lap = cv2.Laplacian(img, cv2.CV_64F)
+        dst = np.abs(xsobel) + np.abs(ysobel) + np.abs(lap)
         out = np.sum(dst, axis=2)
 
         return out
@@ -197,6 +203,10 @@ def main():
     sc = SeamCarving('./arashi.jpg', w)
     QTimer.singleShot(0, sc.carve) # 0ミリ秒後に非同期で実行
     app.exec_()
+
+    output = cv2.imread('output.jpg')
+    gr_truth = cv2.imread('ground_truth.jpg')
+    print(f'2画像の相関係数: {np.corrcoef(np.vstack([output.reshape(-1), gr_truth.reshape(-1)]))[0, 1]}')
 
 
 if __name__ == '__main__':
