@@ -15,7 +15,7 @@ itsdangerous==1.1.0
 Jinja2==2.10.3
 MarkupSafe==1.1.1
 numpy==1.17.4
-opencv-python==4.1.1.26
+opencv-python==4.2.0.32
 pycodestyle==2.5.0
 pygame==1.9.6
 PyQt5==5.9.2
